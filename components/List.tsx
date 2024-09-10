@@ -1,0 +1,38 @@
+import { useContext } from "react";
+import { PlayerContext } from "../contexts/players";
+import { Player } from "../types/players";
+import { UserIcon } from "@heroicons/react/24/solid";
+
+export default function List() {
+  const [players] = useContext(PlayerContext);
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {players.map((player) => (
+        <ListPlayerCard player={player} />
+      ))}
+    </div>
+  );
+}
+
+export function ListPlayerCard({ player }: { player: Player }) {
+  return (
+    <>
+      <div className="flex gap-4 p-5 border-2 border-slate-400 rounded-lg hover:shadow-lg transition-all duration-200">
+        <UserIcon className=" size-14 rounded-full" />
+        <div className="w-full space-y-2.5">
+          <div className="flex justify-between">
+            <h3 className="font-bold">
+              {player.first_name} {player.last_name}
+            </h3>
+            <span className="block text-2xl font-bold">
+              #{player.jersey_number}{" "}
+            </span>
+          </div>
+          <span>Pos : {player.position}</span>
+          <h4>Height : {player.height}</h4>
+          <h5> {player.team.full_name} </h5>
+        </div>
+      </div>
+    </>
+  );
+}

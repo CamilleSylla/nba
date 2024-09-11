@@ -1,14 +1,14 @@
-import { useContext } from "react";
-import { PlayerContext } from "../contexts/players";
+import { Link } from "react-router-dom";
 import { Player } from "../types/players";
 import { UserIcon } from "@heroicons/react/24/solid";
 
-export default function List() {
-  const { players } = useContext(PlayerContext);
+export default function List({ players }: { players: Player[] }) {
   return (
     <div className="grid grid-cols-3 gap-4">
       {players.map((player) => (
-        <ListPlayerCard player={player} />
+        <Link to={`player/${player.id}`} key={player.id}>
+          <ListPlayerCard player={player} />
+        </Link>
       ))}
     </div>
   );

@@ -1,8 +1,9 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
-import { ReactNode, useContext } from "react";
+import { useContext } from "react";
 import { PlayerContext } from "../contexts/players";
+import { Outlet } from "react-router-dom";
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout() {
   const { setQuery } = useContext(PlayerContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -14,7 +15,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <MagnifyingGlassIcon className="size-5" />
         <input type="text" className="flex-1" onChange={handleChange} />
       </div>
-      <div>{children}</div>
+      <Outlet />
     </div>
   );
 }

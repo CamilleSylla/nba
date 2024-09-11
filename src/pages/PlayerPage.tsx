@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Player } from "../../types/players";
+import { Line } from "react-chartjs-2";
 
 export default function PlayerPage() {
   const { id } = useParams();
@@ -11,6 +12,24 @@ export default function PlayerPage() {
   const tableColumns = useMemo(() => {
     return playerStats.length > 0 ? Object.keys(playerStats?.[0]) : [];
   }, [playerStats]);
+  const pointEvoData = useMemo(() => {
+    if (playerStats.length > 0) {
+      const result: {
+        labels: string[];
+        datasets: { label: string; data: string[] | number[] }[];
+      } = {
+        labels: [],
+        datasets: [{ label: "Points", data: [] }],
+      };
+      playerStats.forEach((item) => {
+        const { date, pts } = item;
+        result.labels.push(date);
+        result.datasets[0].data.push(pts);
+      });
+      return result;
+    }
+  }, [playerStats]);
+
   useEffect(() => {
     try {
       //fetching player profile data
@@ -96,6 +115,14 @@ export default function PlayerPage() {
                 })}
               </tbody>
             </table>
+            {/* Point Evolution Chart */}
+            <div>
+              {playerStats.length > 0 ? (
+                <Line data={pointEvoData} />
+              ) : (
+                "pending..."
+              )}
+            </div>
           </>
         ) : (
           "pending..."

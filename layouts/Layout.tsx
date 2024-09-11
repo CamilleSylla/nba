@@ -3,16 +3,19 @@ import {
   MagnifyingGlassIcon,
   UserIcon,
 } from "@heroicons/react/24/solid";
-import { useContext, useEffect, useMemo } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { PlayerContext } from "../contexts/players";
 import { Link, Outlet, useLocation } from "react-router-dom";
 
 export default function Layout() {
   const { query, setQuery, players } = useContext(PlayerContext);
   const { pathname } = useLocation();
+  const comboboxRef = useRef();
+  const [displayCombobox, setDisplayCombobox] = useState<boolean>(true);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value.toLowerCase());
+    setDisplayCombobox(true);
   };
 
   const searchPlayers = useMemo(() => {
@@ -24,7 +27,6 @@ export default function Layout() {
   useEffect(() => setQuery(""), [pathname]);
 
   const isHomePage = useMemo(() => pathname === "/", [pathname]);
-
   return (
     <div className="w-[90%] my-0 mx-auto py-10 space-y-5">
       <div className="flex items-center gap-5">
@@ -38,11 +40,17 @@ export default function Layout() {
             value={query}
             placeholder="Search for a player"
             className="flex-1"
+            onFocus={() => query && setDisplayCombobox(true)}
             onChange={handleChange}
             data-testid="search-input"
           />
-          <ul className="absolute top-0 mt-10 bg-white max-h-96 overflow-y-scroll w-2/3">
+          <ul
+            ref={comboboxRef}
+            className="absolute top-0 mt-10 bg-white max-h-96 overflow-y-scroll w-2/3"
+            onMouseLeave={() => setDisplayCombobox(false)}
+          >
             {searchPlayers &&
+              displayCombobox &&
               !isHomePage &&
               searchPlayers.map((player, i) => {
                 return (

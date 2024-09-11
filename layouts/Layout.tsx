@@ -59,6 +59,7 @@ export default function Layout() {
             })}
         </ul>
       </div>
+      <p>Stats only available for 2023 season</p>
       <Outlet />
     </div>
   );

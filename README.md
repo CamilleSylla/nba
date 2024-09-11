@@ -3,6 +3,8 @@
 This can provide you NBA players stats from 2023 season.\
 Made by **Camille Sylla** fullstack JavaScript developer.
 
+Take a look at [https://camillesylla.github.io/nba/](https://camillesylla.github.io/nba/)
+
 ## 1. Stack
 
 | **Category**               | **Technology**           | **Version**        | **Description**                                                       |

@@ -10,9 +10,11 @@ export default function PlayerPage() {
   const [playerStats, setPlayerStats] = useState([]);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_pending, setPending] = useState<boolean>(true);
+
   const tableColumns = useMemo(() => {
     return playerStats.length > 0 ? Object.keys(playerStats?.[0]) : [];
   }, [playerStats]);
+
   const pointEvoData = useMemo(() => {
     if (playerStats.length > 0) {
       const result: {
@@ -31,6 +33,33 @@ export default function PlayerPage() {
     }
   }, [playerStats]);
 
+  const statsAvergages = useMemo(() => {
+    if (playerStats.length > 0 && tableColumns.length > 0) {
+      const totals = {};
+      playerStats.forEach((row) => {
+        tableColumns.forEach((key) => {
+          if (!totals[key]) {
+            totals[key] = [Number(row[key])];
+          } else {
+            totals[key].push(Number(row[key]));
+          }
+        });
+      });
+
+      delete totals.date;
+      const averages = {};
+      for (const key of Object.keys(totals)) {
+        const sum = totals[key].reduce(
+          (acc: number, value: number) => acc + value,
+          0,
+        );
+        averages[key] = Math.round((sum / totals[key].length) * 100) / 100;
+      }
+      return averages;
+    } else {
+      return {};
+    }
+  }, [playerStats, tableColumns]);
   useEffect(() => {
     try {
       //fetching player profile data
@@ -83,14 +112,23 @@ export default function PlayerPage() {
       <div>
         {player && playerStats.length > 0 ? (
           <div className="space-y-5">
-            <div className="grid grid-cols-2">
-              <PlayerCard player={player} />
-              <Line data={pointEvoData} className="max-w-full h-11" />
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <PlayerCard player={player} />
+              </div>
+              {/* Point Evolution Chart */}
+              <div className="flex-1 border-2 border-slate-400 rounded-lg overflow-hidden p-5">
+                <Line data={pointEvoData} className="max-w-full h-11" />
+              </div>
             </div>
-
-            {/* Point Evolution Chart */}
             <div>
-              <StatsTable columns={tableColumns} data={playerStats} />
+              {statsAvergages && (
+                <StatsTable
+                  columns={tableColumns}
+                  data={playerStats}
+                  totals={statsAvergages}
+                />
+              )}
             </div>
           </div>
         ) : (
@@ -103,7 +141,7 @@ export default function PlayerPage() {
 
 const PlayerCard = ({ player }: { player: Player }) => {
   return (
-    <div className="flex gap-10 border-2 border-slate-400 rounded-lg p-5 overflow-hidden">
+    <div className="flex gap-10 border-2 h-full border-slate-400 rounded-lg p-5 overflow-hidden">
       <UserIcon className="size-40 rounded-full overflow-hidden border-2 border-slate-400 object-cover" />
       <div className="flex-1 space-y-5">
         <div className="flex justify-between">
@@ -146,10 +184,19 @@ const PlayerCard = ({ player }: { player: Player }) => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const StatsTable = ({ columns, data }: { columns: string[]; data: any[] }) => {
+const StatsTable = ({
+  columns,
+  data,
+  totals,
+}: {
+  columns: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  totals: any[];
+}) => {
   return (
-    <table className="table-fixed border-collapse rounded-lg px-5 text-center overflow-hidden">
+    <table className="w-full table-fixed border-collapse rounded-lg px-5 text-center overflow-hidden">
       <thead className="bg-gray-200">
         <tr>
           {columns.map((key: string, i: string | number) => {
@@ -178,6 +225,14 @@ const StatsTable = ({ columns, data }: { columns: string[]; data: any[] }) => {
           );
         })}
       </tbody>
+      <tfoot className="bg-slate-200">
+        <tr className="font-semibold">
+          <td>Totals</td>
+          {Object.keys(totals).map((key, i) => {
+            return <td key={"totals" + key + i}>{totals[key]}</td>;
+          })}
+        </tr>
+      </tfoot>
     </table>
   );
 };

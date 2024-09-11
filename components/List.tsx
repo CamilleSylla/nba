@@ -4,7 +4,7 @@ import { Player } from "../types/players";
 import { UserIcon } from "@heroicons/react/24/solid";
 
 export default function List() {
-  const [players] = useContext(PlayerContext);
+  const { players } = useContext(PlayerContext);
   return (
     <div className="grid grid-cols-3 gap-4">
       {players.map((player) => (

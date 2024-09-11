@@ -1,14 +1,15 @@
 import PlayersProvider from "../contexts/players";
 import List from "../components/List";
+import Layout from "../layouts/Layout";
 import "./index.css";
 
 function App() {
   return (
     <>
       <PlayersProvider>
-        <div className="w-3/4 my-0 mx-auto py-10">
+        <Layout>
           <List />
-        </div>
+        </Layout>
       </PlayersProvider>
     </>
   );

@@ -15,7 +15,7 @@ export default function Layout() {
     return query
       ? players.slice(players.length > 3 ? 2 : players.length - 1)
       : null;
-  }, [query]);
+  }, [query, players]);
 
   useEffect(() => setQuery(""), [pathname]);
 

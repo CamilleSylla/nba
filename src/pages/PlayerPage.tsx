@@ -3,36 +3,20 @@ import { useParams } from "react-router-dom";
 import { Player } from "../../types/players";
 import { Line } from "react-chartjs-2";
 import { UserIcon } from "@heroicons/react/24/solid";
+import InfiniteSpinner from "../../components/InfiniteSpinner";
 
 export default function PlayerPage() {
   const { id } = useParams();
   const [player, setPlayer] = useState<Player | null>(null);
   const [playerStats, setPlayerStats] = useState([]);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_pending, setPending] = useState<boolean>(true);
+  const [playerInfosPending, setPlayerInfosPending] = useState<boolean>(true);
+  const [playerStatsPending, setPlayerStatsPending] = useState<boolean>(true);
 
   const tableColumns = useMemo(() => {
     return playerStats.length > 0 ? Object.keys(playerStats?.[0]) : [];
   }, [playerStats]);
 
-  const pointEvoData = useMemo(() => {
-    if (playerStats.length > 0) {
-      const result: {
-        labels: string[];
-        datasets: { label: string; data: string[] | number[] }[];
-      } = {
-        labels: [],
-        datasets: [{ label: "Points", data: [] }],
-      };
-      playerStats.forEach((item) => {
-        const { date, pts } = item;
-        result.labels.push(date);
-        result.datasets[0].data.push(pts);
-      });
-      return result;
-    }
-  }, [playerStats]);
-
+  // Table Data
   const statsAvergages = useMemo(() => {
     if (playerStats.length > 0 && tableColumns.length > 0) {
       const totals = {};
@@ -57,9 +41,32 @@ export default function PlayerPage() {
       }
       return averages;
     } else {
-      return {};
+      return null;
     }
   }, [playerStats, tableColumns]);
+
+  // Line Graph Data
+  const pointEvoData = useMemo(() => {
+    if (playerStats.length > 0) {
+      const result: {
+        labels: string[];
+        datasets: { label: string; data: string[] | number[] }[];
+      } = {
+        labels: [],
+        datasets: [{ label: "Points", data: [] }],
+      };
+      playerStats.forEach((item) => {
+        const { date, pts } = item;
+        result.labels.push(date);
+        result.datasets[0].data.push(pts);
+      });
+      return result;
+    } else {
+      return null;
+    }
+  }, [playerStats]);
+
+  // Data fetching
   useEffect(() => {
     try {
       //fetching player profile data
@@ -72,6 +79,7 @@ export default function PlayerPage() {
         .then((res) => res.json())
         .then((data) => {
           setPlayer(data.data);
+          setPlayerInfosPending(false);
         });
 
       //fetching player stats data
@@ -98,8 +106,8 @@ export default function PlayerPage() {
             return acc;
           }, []);
           setPlayerStats(stats);
+          setPlayerStatsPending(false);
         });
-      setPending(false);
     } catch (error) {
       console.error(error);
       throw new Error(
@@ -110,30 +118,44 @@ export default function PlayerPage() {
   return (
     <>
       <div>
-        {player && playerStats.length > 0 ? (
-          <div className="space-y-5">
-            <div className="flex gap-2">
-              <div className="flex-1">
+        <div className="space-y-5">
+          <div className="flex gap-2">
+            <div className="flex-1">
+              {!playerInfosPending ? (
                 <PlayerCard player={player} />
-              </div>
-              {/* Point Evolution Chart */}
-              <div className="flex-1 border-2 border-slate-400 rounded-lg overflow-hidden p-5">
-                <Line data={pointEvoData} className="max-w-full h-11" />
-              </div>
+              ) : (
+                <InfiniteSpinner />
+              )}
             </div>
-            <div>
-              {statsAvergages && (
+            {/* Point Evolution Chart */}
+            <div className="flex-1 border-2 border-slate-400 rounded-lg overflow-hidden p-5">
+              {!playerStatsPending ? (
+                !pointEvoData ? (
+                  "No data.."
+                ) : (
+                  <Line data={pointEvoData} className="max-w-full h-11" />
+                )
+              ) : (
+                <InfiniteSpinner />
+              )}
+            </div>
+          </div>
+          <div>
+            {!playerStatsPending ? (
+              !tableColumns || playerStats.length === 0 || !statsAvergages ? (
+                "No data.."
+              ) : (
                 <StatsTable
                   columns={tableColumns}
                   data={playerStats}
                   totals={statsAvergages}
                 />
-              )}
-            </div>
+              )
+            ) : (
+              <InfiniteSpinner />
+            )}
           </div>
-        ) : (
-          "pending..."
-        )}
+        </div>
       </div>
     </>
   );

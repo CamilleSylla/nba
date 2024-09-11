@@ -28,15 +28,21 @@ export default function Layout() {
         <input
           type="text"
           value={query}
+          placeholder="Search for a player"
           className="flex-1"
           onChange={handleChange}
+          data-testid="search-input"
         />
         <ul className="absolute top-0 mt-10 bg-white max-h-96 overflow-y-scroll w-2/3">
           {searchPlayers &&
             !isHomePage &&
             searchPlayers.map((player, i) => {
               return (
-                <Link to={"player/" + player.id} key={player.id + i + "combo"}>
+                <Link
+                  to={"player/" + player.id}
+                  key={player.id + i + "combo"}
+                  data-testid={`player-link-${player.id}`}
+                >
                   <li className="flex gap-5 justify-between w-full p-5 border border-slate-200">
                     <UserIcon className="size-10" />
                     <div className="flex justify-between w-full">

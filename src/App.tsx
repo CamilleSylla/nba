@@ -13,7 +13,7 @@ function App() {
   return (
     <>
       <PlayersProvider>
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.DEV ? "/" : "/nba/"}>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />

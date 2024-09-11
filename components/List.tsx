@@ -4,19 +4,19 @@ import { UserIcon } from "@heroicons/react/24/solid";
 
 export default function List({ players }: { players: Player[] }) {
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <ul className="grid grid-cols-3 gap-4">
       {players.map((player) => (
         <Link to={`player/${player.id}`} key={player.id}>
           <ListPlayerCard player={player} />
         </Link>
       ))}
-    </div>
+    </ul>
   );
 }
 
 export function ListPlayerCard({ player }: { player: Player }) {
   return (
-    <>
+    <li>
       <div className="flex gap-4 p-5 border-2 border-slate-400 rounded-lg hover:shadow-lg transition-all duration-200">
         <UserIcon className=" size-14 rounded-full" />
         <div className="w-full space-y-2.5">
@@ -33,6 +33,6 @@ export function ListPlayerCard({ player }: { player: Player }) {
           <h5> {player.team.full_name} </h5>
         </div>
       </div>
-    </>
+    </li>
   );
 }

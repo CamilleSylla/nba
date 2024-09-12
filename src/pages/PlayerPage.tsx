@@ -11,6 +11,7 @@ export default function PlayerPage() {
   const [playerStats, setPlayerStats] = useState<
     Array<{ date: string } | Stats>
   >([]);
+  const [playerAverages, setPlayerAverages] = useState<Stats | null>(null);
   const [playerInfosPending, setPlayerInfosPending] = useState<boolean>(true);
   const [playerStatsPending, setPlayerStatsPending] = useState<boolean>(true);
 
@@ -18,37 +19,8 @@ export default function PlayerPage() {
     return playerStats.length > 0 ? Object.keys(playerStats?.[0]) : [];
   }, [playerStats]);
 
-  // Table Data
-  const statsAvergages = useMemo(() => {
-    if (playerStats.length > 0 && tableColumns.length > 0) {
-      const totals = {};
-      playerStats.forEach((row) => {
-        tableColumns.forEach((key) => {
-          if (!totals[key]) {
-            totals[key] = [Number(row[key])];
-          } else {
-            totals[key].push(Number(row[key]));
-          }
-        });
-      });
-
-      delete totals.date;
-      const averages = {};
-      for (const key of Object.keys(totals)) {
-        const sum = totals[key].reduce(
-          (acc: number, value: number) => acc + value,
-          0,
-        );
-        averages[key] = Math.round((sum / totals[key].length) * 100) / 100;
-      }
-      return averages;
-    } else {
-      return null;
-    }
-  }, [playerStats, tableColumns]);
-
-  // Line Graph Data
-  const pointEvoData = useMemo(() => {
+  // Line Graph Data based on points scored each games
+  const lineGraphData = useMemo(() => {
     if (playerStats.length > 0) {
       const result: {
         labels: string[];
@@ -113,6 +85,23 @@ export default function PlayerPage() {
           setPlayerStats(stats);
           setPlayerStatsPending(false);
         });
+
+      //fetching player stats averages data based on player id from url param
+      fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/season_averages/?player_ids[]=${id}&season=2023`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: import.meta.env.VITE_API_KEY,
+          },
+        },
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          // turn min into number
+          const min = data.data[0].min.split(":");
+          setPlayerAverages({ ...data.data[0], min: Number(min.join(".")) });
+        });
     } catch (error) {
       console.error(error);
       throw new Error(
@@ -138,10 +127,10 @@ export default function PlayerPage() {
             {/* Point Evolution Chart */}
             <div className="flex-1 border-2 border-slate-400 rounded-lg overflow-hidden p-5">
               {!playerStatsPending ? (
-                !pointEvoData ? (
+                !lineGraphData ? (
                   "No data.."
                 ) : (
-                  <Line data={pointEvoData} className="max-w-full h-11" />
+                  <Line data={lineGraphData} className="max-w-full h-11" />
                 )
               ) : (
                 <InfiniteSpinner />
@@ -150,14 +139,24 @@ export default function PlayerPage() {
           </div>
           <div>
             {!playerStatsPending ? (
-              !tableColumns || playerStats.length === 0 || !statsAvergages ? (
+              !tableColumns || playerStats.length === 0 || !playerAverages ? (
                 "No data.."
               ) : (
-                <StatsTable
-                  columns={tableColumns}
-                  data={playerStats}
-                  totals={statsAvergages}
-                />
+                <>
+                  <p className="italic">
+                    This table represents {playerStats.length} game stats in our
+                    database for season 2023
+                  </p>
+                  <div className="border-2 border-slate-400 rounded-lg overflow-hidden max-h-96 overflow-y-scroll">
+                    <div className="bg-white p-5">
+                      <StatsTable
+                        columns={tableColumns}
+                        data={playerStats}
+                        averages={playerAverages}
+                      />
+                    </div>
+                  </div>
+                </>
               )
             ) : (
               <InfiniteSpinner />
@@ -172,17 +171,16 @@ export default function PlayerPage() {
 const StatsTable = ({
   columns,
   data,
-  totals,
+  averages,
 }: {
   columns: string[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  totals: any[];
+  averages: Stats;
 }) => {
   return (
-    <table className="w-full table-fixed border-collapse rounded-lg px-5 text-center overflow-hidden">
-      <thead className="bg-gray-200">
+    <table className="w-full border-collapseg text-center">
+      <thead className="bg-gray-200 sticky table-fixed top-0 left-0">
         <tr>
           {columns.map((key: string, i: string | number) => {
             return (
@@ -216,8 +214,15 @@ const StatsTable = ({
       <tfoot className="bg-slate-200">
         <tr className="font-semibold">
           <td>Totals</td>
-          {Object.keys(totals).map((key, i) => {
-            return <td key={"totals" + key + i}>{totals[key]}</td>;
+          {/* slice to remove date prop at first element of the array */}
+          {columns.slice(1).map((key: string, i: string | number) => {
+            return (
+              <th key={"tr" + key + i} className="h-14 text-xs">
+                {Math.round(
+                  Number(averages[key as keyof typeof averages]) * 100,
+                ) / 100}
+              </th>
+            );
           })}
         </tr>
       </tfoot>

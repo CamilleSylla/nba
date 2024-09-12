@@ -1,3 +1,4 @@
+// Api call response for player https://docs.balldontlie.io/#get-a-specific-player
 export type Player = {
   id: number;
   first_name: string;
@@ -11,17 +12,10 @@ export type Player = {
   draft_year: number;
   draft_round: number;
   draft_number: number;
-  team: {
-    id: number;
-    conference: string;
-    division: string;
-    city: string;
-    name: string;
-    full_name: string;
-    abbreviation: string;
-  };
+  team: Team;
 };
 
+// Api call response for stats https://docs.balldontlie.io/#get-all-stats
 export interface Team {
   id: number;
   conference: string;
@@ -40,6 +34,20 @@ export interface Team {
   name: string;
   full_name: string;
   abbreviation: string;
+}
+
+export interface Game {
+  id: number;
+  date: string;
+  season: number;
+  status: string;
+  period: number;
+  time: string;
+  postseason: boolean;
+  home_team_score: number;
+  visitor_team_score: number;
+  home_team_id: number;
+  visitor_team_id: number;
 }
 
 export interface Stats {

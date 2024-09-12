@@ -1,9 +1,11 @@
 # NBA PLAYER INSPECTOR
 
-This can provide you NBA players stats from 2023 season.\
+This app give you an overview of NBA players and their stats from 2023 season.\
 Made by **Camille Sylla** fullstack JavaScript developer.
 
 Take a look at [https://camillesylla.github.io/nba/](https://camillesylla.github.io/nba/)
+
+_This app is not responsive_
 
 ## 1. Stack
 

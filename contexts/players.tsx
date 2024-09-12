@@ -5,14 +5,9 @@ import React, {
   useEffect,
   useMemo,
 } from "react";
-import { Player } from "../types/players";
-interface PlayerContextType {
-  players: Player[];
-  pending: boolean;
-  query: string;
-  setQuery: React.Dispatch<React.SetStateAction<string>>;
-}
+import { Player, PlayerContextType } from "../types";
 
+// Create a context to share state and hooks everywhere inside the app
 export const PlayerContext = createContext<PlayerContextType>(
   {} as PlayerContextType,
 );
@@ -23,6 +18,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [query, setQuery] = useState<string>("");
 
   useEffect(() => {
+    // fetching player data from api on app init
     fetch(`${import.meta.env.VITE_API_BASE_URL}/players?per_page=100`, {
       method: "GET",
       headers: {
@@ -39,6 +35,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setPlayersPending(false);
   }, []);
 
+  // filtering player data by query value
   const filteredPlayer = useMemo(
     () =>
       players

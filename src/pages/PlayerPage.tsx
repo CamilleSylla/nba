@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Player } from "../../types/players";
+import { GetStatsQuery, Player, Stats } from "../../types";
 import { Line } from "react-chartjs-2";
 import { UserIcon } from "@heroicons/react/24/solid";
 import InfiniteSpinner from "../../components/InfiniteSpinner";
@@ -8,7 +8,9 @@ import InfiniteSpinner from "../../components/InfiniteSpinner";
 export default function PlayerPage() {
   const { id } = useParams();
   const [player, setPlayer] = useState<Player | null>(null);
-  const [playerStats, setPlayerStats] = useState([]);
+  const [playerStats, setPlayerStats] = useState<
+    Array<{ date: string } | Stats>
+  >([]);
   const [playerInfosPending, setPlayerInfosPending] = useState<boolean>(true);
   const [playerStatsPending, setPlayerStatsPending] = useState<boolean>(true);
 
@@ -69,7 +71,7 @@ export default function PlayerPage() {
   // Data fetching
   useEffect(() => {
     try {
-      //fetching player profile data
+      //fetching player profile data based on player id from url param
       fetch(`${import.meta.env.VITE_API_BASE_URL}/players/${id}`, {
         method: "GET",
         headers: {
@@ -82,7 +84,7 @@ export default function PlayerPage() {
           setPlayerInfosPending(false);
         });
 
-      //fetching player stats data
+      //fetching player stats data based on player id from url param
       fetch(
         `${import.meta.env.VITE_API_BASE_URL}/stats?seasons[]=2023&player_ids[]=${id}`,
         {
@@ -93,18 +95,21 @@ export default function PlayerPage() {
         },
       )
         .then((res) => res.json())
-        .then(({ data }) => {
-          const stats = data.reduce((acc, item) => {
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { player, team, game, ...stats } = item;
-            delete stats.id;
-            if (!acc) {
-              acc = [{ date: game.date, ...stats }];
-            } else {
-              acc = [...acc, { date: game.date, ...stats }];
-            }
-            return acc;
-          }, []);
+        .then(({ data }: GetStatsQuery) => {
+          const stats = data.reduce(
+            (acc, item) => {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const { player, team, game, ...stats } = item;
+              delete stats.id;
+              if (!acc) {
+                acc = [{ date: game.date, ...stats }];
+              } else {
+                acc = [...acc, { date: game.date, ...stats }];
+              }
+              return acc;
+            },
+            [] as Array<{ date: string } | Stats>,
+          );
           setPlayerStats(stats);
           setPlayerStatsPending(false);
         });
@@ -120,8 +125,9 @@ export default function PlayerPage() {
       <div>
         <div className="space-y-5">
           <div className="flex gap-2">
+            {/* Player Info Card */}
             <div className="flex-1">
-              {!playerInfosPending ? (
+              {!playerInfosPending && player ? (
                 <PlayerCard player={player} />
               ) : (
                 <InfiniteSpinner />

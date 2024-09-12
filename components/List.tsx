@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Player } from "../types/players";
+import { Player } from "../types";
 import { UserIcon } from "@heroicons/react/24/solid";
 
 export default function List({ players }: { players: Player[] }) {

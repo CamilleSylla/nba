@@ -34,7 +34,7 @@ _This app is not responsive_
 
 - List of available players from the API
 
-- Search for a player with the search bar and select him from matching results
+- Search to filter players and find your target
 
 - Get target player details from the last 25th games
 

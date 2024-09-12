@@ -54,12 +54,15 @@ export default function Layout() {
             {comboboxPlayers &&
               displayCombobox &&
               !isHomePage &&
-              comboboxPlayers.map((player, i) => {
+              comboboxPlayers.map((player) => {
                 return (
                   // Combobox Cards to be displayed
                   <Link
                     to={"player/" + player.id}
-                    key={player.id + i + "combo"}
+                    key={
+                      "combobox-" +
+                      Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
+                    }
                     data-testid={`player-link-${player.id}`}
                   >
                     <div className="hover:bg-gray-200 transition-all duration-300">

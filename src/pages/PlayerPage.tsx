@@ -98,9 +98,11 @@ export default function PlayerPage() {
       )
         .then((res) => res.json())
         .then((data) => {
-          // turn min into number
-          const min = data.data[0].min.split(":");
-          setPlayerAverages({ ...data.data[0], min: Number(min.join(".")) });
+          if (data.data.length > 0) {
+            // turn min into number
+            const min = data.data[0].min.split(":");
+            setPlayerAverages({ ...data.data[0], min: Number(min.join(".")) });
+          }
         });
     } catch (error) {
       console.error(error);

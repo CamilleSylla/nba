@@ -86,7 +86,7 @@ export default function PlayerPage() {
 
       //fetching player stats data based on player id from url param
       fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/stats?seasons[]=2023&player_ids[]=${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/stats?per_page=100&postseason=false&seasons[]=2023&player_ids[]=${id}`,
         {
           method: "GET",
           headers: {

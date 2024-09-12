@@ -127,12 +127,15 @@ export default function PlayerPage() {
               )}
             </div>
             {/* Point Evolution Chart */}
-            <div className="flex-1 border-2 border-slate-400 rounded-lg overflow-hidden p-5">
+            <div className="flex-1  ">
               {!playerStatsPending ? (
                 !lineGraphData ? (
                   "No data.."
                 ) : (
-                  <Line data={lineGraphData} className="max-w-full h-11" />
+                  <Line
+                    data={lineGraphData}
+                    className="max-w-full h-11 border-2 border-slate-400 rounded-lg overflow-hidden p-5"
+                  />
                 )
               ) : (
                 <InfiniteSpinner />
@@ -151,9 +154,9 @@ export default function PlayerPage() {
                   </p>
                   <div className="border-2 border-slate-400 rounded-lg overflow-hidden max-h-96 overflow-y-scroll">
                     <div className="bg-white p-5">
-                      <StatsTable
+                      <DataTable
                         columns={tableColumns}
-                        data={playerStats}
+                        rows={playerStats}
                         averages={playerAverages}
                       />
                     </div>
@@ -170,14 +173,13 @@ export default function PlayerPage() {
   );
 }
 
-const StatsTable = ({
+const DataTable = ({
   columns,
-  data,
+  rows,
   averages,
 }: {
   columns: string[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  data: any[];
+  rows: (Stats | { date: string })[];
   averages: Stats;
 }) => {
   return (
@@ -193,19 +195,19 @@ const StatsTable = ({
           })}
         </tr>
       </thead>
-      <tbody className="">
-        {data.map((stats, row) => {
+      <tbody>
+        {rows.map((row, index) => {
           return (
             <tr
               className="border-b border-slate-400 hover:bg-slate-200 transition-all duration-300"
-              key={"row" + row}
+              key={"row" + index}
             >
-              {Object.keys(stats).map((key, i) => {
+              {Object.keys(row).map((key, i) => {
                 return (
-                  <td key={row + i + key}>
+                  <td key={"td" + i + key}>
                     {key !== "date"
-                      ? Math.round(data[row][key] * 100) / 100
-                      : data[row][key]}
+                      ? Math.round(rows[index][key] * 100) / 100
+                      : rows[index][key]}
                   </td>
                 );
               })}

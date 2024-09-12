@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { GetStatsQuery, Player, Stats } from "../../types";
 import { Line } from "react-chartjs-2";
-import { UserIcon } from "@heroicons/react/24/solid";
 import InfiniteSpinner from "../../components/InfiniteSpinner";
+import PlayerCard from "../../components/PlayerCard";
 
 export default function PlayerPage() {
   const { id } = useParams();
@@ -128,7 +128,9 @@ export default function PlayerPage() {
             {/* Player Info Card */}
             <div className="flex-1">
               {!playerInfosPending && player ? (
-                <PlayerCard player={player} />
+                <div className="border-2 border-slate-400 rounded-lg overflow-hidden">
+                  <PlayerCard player={player} size="lg" draft mensurations />
+                </div>
               ) : (
                 <InfiniteSpinner />
               )}
@@ -167,51 +169,6 @@ export default function PlayerPage() {
   );
 }
 
-const PlayerCard = ({ player }: { player: Player }) => {
-  return (
-    <div className="flex gap-10 border-2 h-full border-slate-400 rounded-lg p-5 overflow-hidden">
-      <UserIcon className="size-40 rounded-full overflow-hidden border-2 border-slate-400 object-cover" />
-      <div className="flex-1 space-y-5">
-        <div className="flex justify-between">
-          <h1 className="text-4xl font-bold">
-            {player.first_name} {player.last_name}{" "}
-            <span className="block text-2xl">
-              {player.position} - {player.team.full_name}
-            </span>
-            <span className="block text-lg">From {player.country}</span>
-          </h1>
-          <p className="font-bold text-6xl">#{player.jersey_number}</p>
-        </div>
-        <div className="flex justify-between w-2/3">
-          {/* Draft Infos */}
-          <ul>
-            <li className="font-bold">
-              College : <span className="font-normal">{player.college}</span>
-            </li>
-            <li className="font-bold">
-              Draft year :{" "}
-              <span className="font-normal">{player.draft_year}</span>
-            </li>
-            <li className="font-bold">
-              round : <span className="font-normal">{player.draft_round}</span>,
-              pick : <span className="font-normal">{player.draft_number}</span>
-            </li>
-          </ul>
-          {/* Physical attributes */}
-          <ul>
-            <li className="font-bold">
-              Height : <span className="font-normal">{player.height}</span>
-            </li>
-            <li className="font-bold">
-              Weight : <span className="font-normal">{player.weight}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const StatsTable = ({
   columns,
   data,
@@ -239,7 +196,10 @@ const StatsTable = ({
       <tbody className="">
         {data.map((stats, row) => {
           return (
-            <tr className="border-b border-slate-400 hover:bg-slate-200 transition-all duration-300 ">
+            <tr
+              className="border-b border-slate-400 hover:bg-slate-200 transition-all duration-300"
+              key={"row" + row}
+            >
               {Object.keys(stats).map((key, i) => {
                 return (
                   <td key={row + i + key}>

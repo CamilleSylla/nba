@@ -1,11 +1,8 @@
-import {
-  HomeIcon,
-  MagnifyingGlassIcon,
-  UserIcon,
-} from "@heroicons/react/24/solid";
+import { HomeIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { PlayerContext } from "../contexts/players";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import PlayerCard from "../components/PlayerCard";
 
 export default function Layout() {
   const { query, setQuery, players } = useContext(PlayerContext);
@@ -48,10 +45,10 @@ export default function Layout() {
             onChange={handleInputChange}
             data-testid="search-input"
           />
-          {/* Combobox displaying 3 are less matching players */}
+          {/* Combobox displaying 3 or less matching players */}
           <ul
             ref={comboboxRef}
-            className="absolute top-0 mt-10 bg-white max-h-96 overflow-y-scroll w-2/3"
+            className="divide-y divide-solid absolute top-0 mt-10 bg-white max-h-96 overflow-y-scroll w-2/3"
             onMouseLeave={() => setDisplayCombobox(false)}
           >
             {comboboxPlayers &&
@@ -65,23 +62,9 @@ export default function Layout() {
                     key={player.id + i + "combo"}
                     data-testid={`player-link-${player.id}`}
                   >
-                    <li className="flex gap-5 justify-between w-full p-5 border border-slate-200">
-                      <UserIcon className="size-10" />
-                      <div className="flex justify-between w-full">
-                        <h3 className="text-lg font-bold">
-                          {player.first_name} {player.last_name}{" "}
-                          <span className="block text-base">
-                            {player.position} - {player.team.full_name}
-                          </span>
-                          <span className="block text-sm">
-                            From {player.country}
-                          </span>
-                        </h3>
-                        <p className="font-bold text-xl">
-                          #{player.jersey_number}
-                        </p>
-                      </div>
-                    </li>
+                    <div className="hover:bg-gray-200 transition-all duration-300">
+                      <PlayerCard size="xs" player={player} />
+                    </div>
                   </Link>
                 );
               })}

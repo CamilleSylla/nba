@@ -152,8 +152,8 @@ export default function PlayerPage() {
                     This table represents {playerStats.length} game stats in our
                     database for season 2023
                   </p>
-                  <div className="border-2 border-slate-400 rounded-lg overflow-hidden max-h-96 overflow-y-scroll">
-                    <div className="bg-white p-5">
+                  <div className="border-2 border-slate-400 rounded-lg p-5">
+                    <div className="bg-white overflow-hidden max-h-96 overflow-y-scroll">
                       <DataTable
                         columns={tableColumns}
                         rows={playerStats}
@@ -190,7 +190,7 @@ const DataTable = ({
   averages: Stats;
 }) => {
   return (
-    <table className="w-full border-collapseg text-center">
+    <table className="w-full border-collapse text-center">
       <thead className="bg-gray-200 sticky table-fixed top-0 left-0">
         <tr>
           {columns.map((key: string, i: string | number) => {

@@ -14,7 +14,7 @@ export default function Home() {
           {players.map((player) => (
             <div className="border-2 border-slate-400 rounded-lg overflow-hidden hover:bg-slate-400 transition-all duration-300">
               <Link to={`player/${player.id}`} key={player.id}>
-                <PlayerCard size="md" player={player} />
+                <PlayerCard player={player} />
               </Link>
             </div>
           ))}

@@ -1,5 +1,42 @@
 import { Player } from "../types";
 
+/**
+ *
+ * Dummy component displying target player informations
+ *
+ * @param {Player} player Player object data to be rendered in card
+ * @param {boolean} draft Optional parameter that allow component to display draft section to be rendered
+ * @param {boolean} mensurations Optional parameter that allow component to display mensurations section to be rendered
+ * @param {string} [size="md"] Optional parameter take an enum ` "xs" | "md" | "lg" ` set default to `"md"`\
+ * \
+ * Here are classes in relation with size param
+ * ```
+ * const classes = {
+    lg: {
+      img: "size-20",
+      title: "text-3xl",
+      titleInner: "text-xl",
+      country: " text-base",
+      number: "text-5xl",
+    },
+    md: {
+      img: "size-16",
+      title: "text-2xl",
+      titleInner: "text-lg",
+      country: "text-xs",
+      number: "text-2xl",
+    },
+    xs: {
+      img: "size-10",
+      title: "text-2xl",
+      titleInner: "text-sm",
+      country: "text-xs",
+      number: "text-2xl",
+    },
+  };
+ * ```
+ * @returns UI card with player infos
+ */
 export default function PlayerCard({
   player,
   draft,

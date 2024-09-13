@@ -3,7 +3,11 @@ import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { PlayerContext } from "../contexts/players";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import PlayerCard from "../components/PlayerCard";
-
+/**
+ * Renders application layout\
+ * Containing search input with combobox\
+ * Got interaction with ` PlayerContext `
+ */
 export default function Layout() {
   const { query, setQuery, players } = useContext(PlayerContext);
   const [displayCombobox, setDisplayCombobox] = useState<boolean>(true);

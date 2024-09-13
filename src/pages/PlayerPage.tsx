@@ -173,6 +173,13 @@ export default function PlayerPage() {
   );
 }
 
+/**
+ *
+ * Basic table component
+ * @param {string[]} columns data render in head section of the table
+ * @param {(Stats | { date: string })[]} rows table rows mapped and rendered in table body
+ * @param {Stats} averages data render in footer section of the table
+ */
 const DataTable = ({
   columns,
   rows,
